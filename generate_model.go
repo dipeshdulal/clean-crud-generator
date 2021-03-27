@@ -67,7 +67,7 @@ func (m GenerateModel) Run() {
 		TableName:   tableName,
 		DataTypes:   dataTypes,
 		FirstChar:   firstChar,
-		MapData:     strings.Join(mapData, ",") + ",",
+		MapData:     strings.Join(mapData, ",\n") + ",",
 	}
 
 	output, err := ParseTemplate("generate_model.txt", input)
