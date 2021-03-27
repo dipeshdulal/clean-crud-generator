@@ -1,0 +1,16 @@
+package {{.PackageName}}
+
+// {{.ModelName}} struct
+type {{.ModelName}} struct {
+    {{.DataTypes}}
+}
+
+func ({{.FirstChar}} {{.ModelName}}) TableName() string {
+    return "{{.TableName}}"
+}
+
+func ({{.FirstChar}} {{.ModelName}}) ToMap() map[string]interface{} {
+    return map[string]interface{}{
+        {{.MapData}}
+    }
+}
