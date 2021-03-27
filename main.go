@@ -19,7 +19,8 @@ type CommandMapFunc map[string]func(*zap.SugaredLogger) ICommand
 type CommandMap map[string]ICommand
 
 var commandFuncMap = CommandMapFunc{
-	"CREATE_MODELS": NewGenerateModel,
+	"CREATE_MODELS":     NewGenerateModel,
+	"CREATE_REPOSITORY": NewGenerateRepository,
 }
 
 func main() {
