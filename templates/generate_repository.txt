@@ -1,0 +1,59 @@
+package {{.PackageName}}
+
+import (
+    "{{.ModuleName}}/infrastructure"
+    "{{.ModuleName}}/models"
+
+    "gorm.io/gorm"
+)
+
+// {{.ModelName}} struct
+type {{.ModelName}} struct {
+    db     infrastructure.Database
+    logger infrastructure.Logger
+}
+
+func New{{.ModelName}}Repository(
+    db infrastructure.Database,
+    logger infrastructure.Logger,
+) {{.ModelName}}Repository {
+    return {{.ModelName}}Repository{
+        db: db,
+        logger: logger,
+    }
+}
+
+// WithTrx enables repository with transaction
+func ({{.FirstChar}} {{.ModelName}}Repository) WithTrx(trxHandle *gorm.DB) {{.ModelName}}Repository {
+    if trxHandle != nil {
+        {{.FirstChar}}.logger.Zap.Error("transaction database not provided")
+        return {{.FirstChar}}
+    }
+    {{.FirstChar}}.db.DB = trxHandle
+    return {{.FirstChar}}
+}
+
+// GetAll gets all {{.ModelName}}
+func ({{.FirstChar}} {{.ModelName}}Repository) GetAll() (m []models.{{.ModelName}}, err error) {
+    return m, {{.FirstChar}}.db.DB.Find(&m).Error
+}
+
+// Save {{.ModelName}}
+func ({{.FirstChar}} {{.ModelName}}Repository) Save(m models.{{.ModelName}}) (models.{{.ModelName}}, error) {
+    return m, {{.FirstChar}}.db.DB.Save(&m).Error
+}
+
+// Update updates {{.ModelName}}
+func ({{.FirstChar}} {{.ModelName}}Repository) Update(m models.{{.ModelName}}) (models.{{.ModelName}}, error) {
+	return m, {{.FirstChar}}.db.DB.Save(&m).Error
+}
+
+// GetOne gets one {{.ModelName}}
+func ({{.FirstChar}} {{.ModelName}}Repository) GetOne(pk interface{}) (m models.{{.ModelName}}, err error) {
+	return m, {{.FirstChar}}.db.DB.First(&m, pk).Error
+}
+
+// Delete deletes the row of data
+func ({{.FirstChar}} {{.ModelName}}Repository) Delete(pk interface{}) error {
+	return {{.FirstChar}}.db.DB.Delete(&models.{{.ModelName}}{}, pk).Error
+}
