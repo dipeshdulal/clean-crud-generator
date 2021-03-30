@@ -1,0 +1,124 @@
+package {{.PackageName}}
+
+import (
+	"{{.ModuleName}}/responses"
+	"{{.ModuleName}}/services"
+	"{{.ModuleName}}/infrastructure"
+	"{{.ModuleName}}/models"
+	"{{.ModuleName}}/utils"
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+)
+
+// {{.ModelName}}sController structure
+type {{.ModelName}}sController struct {
+	service services.{{.ModelName}}sService
+	logger  infrastructure.Logger
+}
+
+// New{{.ModelName}}sController creates a new resource controller
+func New{{.ModelName}}sController(
+	service services.{{.ModelName}}sService,
+	logger infrastructure.Logger,
+) {{.ModelName}}sController {
+	return {{.ModelName}}sController{
+		service: service,
+		logger:  logger,
+	}
+}
+
+// HandleCreate{{.ModelName}}s create the resource
+func ({{.FirstChar}} {{.ModelName}}sController) HandleCreate{{.ModelName}}s() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		model := models.{{.ModelName}}{}
+		if err := c.ShouldBind(&model); err != nil {
+			{{.FirstChar}}.logger.Zap.Error("{{.ModelName}}s params parse error: ", err.Error())
+			responses.ErrorJSON(c, http.StatusBadRequest, "failed to save model")
+			return
+		}
+
+		if _, err := {{.FirstChar}}.service.Create{{.ModelName}}s(model); err != nil {
+			{{.FirstChar}}.logger.Zap.Error("create model error: ", err.Error())
+			responses.ErrorJSON(c, http.StatusInternalServerError, err.Error())
+			return
+		}
+
+		responses.SuccessJSON(c, http.StatusOK, "record saved successfully")
+
+	}
+}
+
+// HandleGetAll{{.ModelName}}s get all the resource
+func ({{.FirstChar}} {{.ModelName}}sController) HandleGetAll{{.ModelName}}s() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		pagination := utils.BuildPagination(c)
+		model, count, err := {{.FirstChar}}.service.GetAll{{.ModelName}}s(pagination)
+		if err != nil {
+			{{.FirstChar}}.logger.Zap.Error("{{.ModelName}}s get error: ", err.Error())
+			responses.ErrorJSON(c, http.StatusInternalServerError, "failed to get resource")
+			return
+		}
+
+		responses.JSONCount(c, http.StatusOK, model, int(count))
+	}
+}
+
+// HandleUpdate{{.ModelName}}s update given coin
+func ({{.FirstChar}} {{.ModelName}}sController) HandleUpdate{{.ModelName}}s() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		pk := c.Param("id")
+
+		db{{.ModelName}}, err := {{.FirstChar}}.service.GetOne{{.ModelName}}(pk)
+		if err != nil {
+			{{.FirstChar}}.logger.Zap.Error("model update error: ", err.Error())
+			responses.ErrorJSON(c, http.StatusInternalServerError, "failed to update models")
+			return
+		}
+
+		if err := c.ShouldBind(&db{{.ModelName}}); err != nil {
+			{{.FirstChar}}.logger.Zap.Error("{{.ModelName}}s params parse error: ", err.Error())
+			responses.ErrorJSON(c, http.StatusBadRequest, "failed to udpate models")
+			return
+		}
+
+		if err := {{.FirstChar}}.service.Update{{.ModelName}}s(db{{.ModelName}}); err != nil {
+			{{.FirstChar}}.logger.Zap.Error("model update error: ", err.Error())
+			responses.ErrorJSON(c, http.StatusInternalServerError, "failed to update models")
+			return
+		}
+
+		responses.SuccessJSON(c, http.StatusOK, "model updated")
+
+	}
+}
+
+// HandleDelete{{.ModelName}}s delete given coin
+func ({{.FirstChar}} {{.ModelName}}sController) HandleDelete{{.ModelName}}s() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		pk := c.Param("id")
+
+		if err := {{.FirstChar}}.service.Delete{{.ModelName}}(pk); err != nil {
+			{{.FirstChar}}.logger.Zap.Error("model update error: ", err.Error())
+			responses.ErrorJSON(c, http.StatusInternalServerError, "failed to delete models")
+			return
+		}
+
+		responses.SuccessJSON(c, http.StatusOK, "model deleted")
+
+	}
+}
+
+// HandleGet{{.ModelName}}sByID get model by ID
+func ({{.FirstChar}} {{.ModelName}}sController) HandleGet{{.ModelName}}sByID() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		pk := c.Param("id")
+		model, err := {{.FirstChar}}.service.GetOne(pk)
+		if err != nil {
+			responses.ErrorJSON(c, http.StatusBadGateway, "Failed to get model")
+			return
+		}
+		responses.SuccessJSON(c, http.StatusOK, model)
+	}
+}
