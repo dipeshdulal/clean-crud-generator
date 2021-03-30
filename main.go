@@ -21,6 +21,7 @@ type CommandMap map[string]ICommand
 var commandFuncMap = CommandMapFunc{
 	"CREATE_MODELS":     NewGenerateModel,
 	"CREATE_REPOSITORY": NewGenerateRepository,
+	"CREATE_SERVICE":    NewGenerateService,
 }
 
 func main() {
