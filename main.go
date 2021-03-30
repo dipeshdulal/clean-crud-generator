@@ -22,6 +22,7 @@ var commandFuncMap = CommandMapFunc{
 	"CREATE_MODELS":     NewGenerateModel,
 	"CREATE_REPOSITORY": NewGenerateRepository,
 	"CREATE_SERVICE":    NewGenerateService,
+	"CREATE_CONTROLLER": NewGenerateController,
 }
 
 func main() {
