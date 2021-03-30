@@ -1,0 +1,66 @@
+package {{.PackageName}}
+
+import (
+	"{{.ModuleName}}/api/repository"
+	"{{.ModuleName}}/lib"
+	"{{.ModuleName}}/models"
+	"github.com/jinzhu/copier"
+	"gorm.io/gorm"
+)
+
+// {{.ModelName}}Service service layer
+type {{.ModelName}}Service struct {
+	logger     lib.Logger
+	repository repository.{{.ModelName}}Repository
+}
+
+// New{{.ModelName}}Service creates a new userservice
+func New{{.ModelName}}Service(logger lib.Logger, repository repository.{{.ModelName}}Repository) {{.ModelName}}Service {
+	return {{.ModelName}}Service{
+		logger:     logger,
+		repository: repository,
+	}
+}
+
+// WithTrx delegates transaction to repository database
+func ({{.FirstChar}} {{.ModelName}}Service) WithTrx(trxHandle *gorm.DB) {{.ModelName}}Service {
+	{{.FirstChar}}.repository = {{.FirstChar}}.repository.WithTrx(trxHandle)
+	return {{.FirstChar}}
+}
+
+// GetOne{{.ModelName}} gets one resource
+func ({{.FirstChar}} {{.ModelName}}Service) GetOne{{.ModelName}}(pk interface{}) (models.{{.ModelName}}, error) {
+	model, err := {{.FirstChar}}.repository.GetOne(pk)
+	return model, err
+}
+
+// GetAll{{.ModelName}} get all the resource
+func ({{.FirstChar}} {{.ModelName}}Service) GetAll{{.ModelName}}() ([]models.{{.ModelName}}, error) {
+	models, err := {{.FirstChar}}.repository.GetAll()
+	return models, err
+}
+
+// Create{{.ModelName}} call to create the resource
+func ({{.FirstChar}} {{.ModelName}}Service) Create{{.ModelName}}(model models.{{.ModelName}}) error {
+	_, err := {{.ModelName}}.repository.Save(model)
+	return err
+}
+
+// Update{{.ModelName}} updates the model
+func ({{.FirstChar}} {{.ModelName}}Service) Update{{.ModelName}}(pk interface{}, model models.{{.ModelName}}) error {
+
+	modelDB, err := {{.FirstChar}}.GetOne{{.ModelName}}(pk)
+	if err != nil {
+		return err
+	}
+
+	copier.Copy(&modelDB, &model)
+
+	_, err = {{.FirstChar}}.repository.Update(modelDB)
+	return err
+}
+
+// Delete{{.ModelName}} deletes the model
+func ({{.FirstChar}} {{.ModelName}}Service) Delete{{.ModelName}}(pk interface{}) error {
+	return {{.FirstChar}}.repository.Delete(pk)
+}
