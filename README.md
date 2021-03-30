@@ -7,8 +7,8 @@ This project aims to create a cli tool to generate crud code for api's.
 ### Checklist
 - [x] Models generator
 - [x] Repository generator
-- [ ] Service generator
-- [ ] Controller generator
+- [x] Service generator
+- [x] Controller generator
 - [ ] Route generator
-- [ ] Test if generator code works in project
+- [ ] Test if generator code works in project and tweak if necessary (both clean-gin project and template)
 - [ ] Save generated code into file
